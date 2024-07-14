@@ -27,7 +27,7 @@ void main() async {
   File audioFile = File('audio.wav');
 
   final res1 = await deepgram.transcribeFromFile(audioFile);
-  print(res1.transcript);
+  // print(res1.transcript);
 
   // -------------------- From a URL --------------------
   final res2 = await deepgram.transcribeFromUrl('https://somewhere/audio.wav');
@@ -35,7 +35,7 @@ void main() async {
 
   // -------------------- From raw data --------------------
   final res = await deepgram.transcribeFromBytes(List.from([1, 2, 3, 4, 5]));
-  print(res.transcript);
+  // print(res.transcript);
 
   // -------------------- From a stream  --------------------
   // For example : from a microphone https://pub.dev/packages/record (other packages would work too as long as they provide a stream)
@@ -47,8 +47,7 @@ void main() async {
 
   Stream<List<int>> audioStream = audioFile.openRead(); // mic.stream ...
 
-  Stream<DeepgramSttResult> resStream =
-      deepgram.transcribeFromLiveAudioStream(audioStream);
+  Stream<DeepgramSttResult> resStream = deepgram.transcribeFromLiveAudioStream(audioStream);
 
   resStream.listen((res) {
     print(res.transcript);
@@ -56,8 +55,7 @@ void main() async {
 
   // If you prefer to have more control over the stream:
 
-  final DeepgramLiveTranscriber transcriber =
-      deepgram.createLiveTranscriber(audioStream);
+  final DeepgramLiveTranscriber transcriber = deepgram.createLiveTranscriber(audioStream);
 
   transcriber.start();
 

@@ -11,8 +11,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 /// Class used to transcribe live audio streams.
 class DeepgramLiveTranscriber {
   /// Create a live transcriber with a start and close method
-  DeepgramLiveTranscriber(this.apiKey,
-      {required this.inputAudioStream, this.queryParams});
+  DeepgramLiveTranscriber(this.apiKey, {required this.inputAudioStream, this.queryParams});
 
   /// your Deepgram API key
   final String apiKey;
@@ -24,8 +23,7 @@ class DeepgramLiveTranscriber {
   final Map<String, dynamic>? queryParams;
 
   final String _baseLiveUrl = 'wss://api.deepgram.com/v1/listen';
-  final StreamController<DeepgramSttResult> _outputTranscriptStream =
-      StreamController<DeepgramSttResult>();
+  final StreamController<DeepgramSttResult> _outputTranscriptStream = StreamController<DeepgramSttResult>();
   late WebSocketChannel _wsChannel;
   bool _isClosed = false;
 
@@ -104,8 +102,7 @@ class Deepgram {
   /// Transcribe from raw data.
   ///
   /// https://developers.deepgram.com/reference/listen-file
-  Future<DeepgramSttResult> transcribeFromBytes(List<int> data,
-      {Map<String, dynamic>? queryParams}) async {
+  Future<http.Response> transcribeFromBytes(List<int> data, {Map<String, dynamic>? queryParams}) async {
     http.Response res = await http.post(
       buildUrl(_baseSttUrl, baseQueryParams, queryParams),
       headers: {
@@ -114,14 +111,13 @@ class Deepgram {
       body: data,
     );
 
-    return DeepgramSttResult(res.body);
+    return res;
   }
 
   /// Transcribe a local audio file.
   ///
   /// https://developers.deepgram.com/reference/listen-file
-  Future<DeepgramSttResult> transcribeFromFile(File file,
-      {Map<String, dynamic>? queryParams}) {
+  Future<http.Response> transcribeFromFile(File file, {Map<String, dynamic>? queryParams}) {
     assert(file.existsSync());
     final Uint8List bytes = file.readAsBytesSync();
 
@@ -131,8 +127,7 @@ class Deepgram {
   /// Transcribe a local audio file from path.
   ///
   /// https://developers.deepgram.com/reference/listen-file
-  Future<DeepgramSttResult> transcribeFromPath(String path,
-      {Map<String, dynamic>? queryParams}) {
+  Future<http.Response> transcribeFromPath(String path, {Map<String, dynamic>? queryParams}) {
     final file = File(path);
     assert(file.existsSync());
     final Uint8List bytes = file.readAsBytesSync();
@@ -143,8 +138,7 @@ class Deepgram {
   /// Transcribe a remote audio file from URL.
   ///
   /// https://developers.deepgram.com/reference/listen-remote
-  Future<DeepgramSttResult> transcribeFromUrl(String url,
-      {Map<String, dynamic>? queryParams}) async {
+  Future<DeepgramSttResult> transcribeFromUrl(String url, {Map<String, dynamic>? queryParams}) async {
     http.Response res = await http.post(
       buildUrl(_baseSttUrl, baseQueryParams, queryParams),
       headers: {
@@ -163,21 +157,17 @@ class Deepgram {
   /// see [DeepgramLiveTranscriber] which you can also use directly
   ///
   /// https://developers.deepgram.com/reference/listen-live
-  DeepgramLiveTranscriber createLiveTranscriber(Stream<List<int>> audioStream,
-      {Map<String, dynamic>? queryParams}) {
+  DeepgramLiveTranscriber createLiveTranscriber(Stream<List<int>> audioStream, {Map<String, dynamic>? queryParams}) {
     return DeepgramLiveTranscriber(apiKey,
-        inputAudioStream: audioStream,
-        queryParams: mergeMaps(baseQueryParams, queryParams));
+        inputAudioStream: audioStream, queryParams: mergeMaps(baseQueryParams, queryParams));
   }
 
   /// Transcribe a live audio stream.
   ///
   /// https://developers.deepgram.com/reference/listen-live
-  Stream<DeepgramSttResult> transcribeFromLiveAudioStream(
-      Stream<List<int>> audioStream,
+  Stream<DeepgramSttResult> transcribeFromLiveAudioStream(Stream<List<int>> audioStream,
       {Map<String, dynamic>? queryParams}) {
-    DeepgramLiveTranscriber transcriber =
-        createLiveTranscriber(audioStream, queryParams: queryParams);
+    DeepgramLiveTranscriber transcriber = createLiveTranscriber(audioStream, queryParams: queryParams);
 
     transcriber.start();
     return transcriber.stream;
@@ -207,8 +197,7 @@ class Deepgram {
   /// Convert text to speech.
   ///
   /// https://developers.deepgram.com/reference/text-to-speech-api
-  Future<DeepgramTtsResult> speakFromText(String text,
-      {Map<String, dynamic>? queryParams}) async {
+  Future<DeepgramTtsResult> speakFromText(String text, {Map<String, dynamic>? queryParams}) async {
     http.Response res = await http.post(
       buildUrl(_baseTtsUrl, baseQueryParams, queryParams),
       headers: {
